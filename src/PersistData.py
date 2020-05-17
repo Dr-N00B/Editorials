@@ -39,6 +39,7 @@ class PersistDataToFile(IPersistData):
 			PersistDataToFile.config_data = config_data
 
 	def storeData(self, np_name, article_data):
+		np_name = np_name.replace(' ', '_')
 		path = Util.getAbsPath(PersistDataToFile.config_data[Const.STORAGE_LOC], np_name)
 		Util.makeDir(path)
 		

@@ -1,8 +1,8 @@
 {
-	"url_file"  : "D:\\Projects\\python\\Editorials\\config\\action_items.json",
+	"url_file"  : "path to action_items.json",
 	"log_level": "DEBUG",
 	"storage" : {
 			"type" : "file",
-			"path" : "D:\\Projects\\python\\Editorials\\data"
+			"path" : "directory path"
 	}
 }

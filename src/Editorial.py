@@ -22,17 +22,22 @@ class IEditorial:
 			IEditorial.max_feed_dict = IEditorial.objStorage.getMaxFeedDate()
 
 	def fetchArticle(self,config_data):
+		
 		for np_title, title_info in config_data.items():
-			rss_url = title_info[Const.RSS_URL]
-			rss_parsed_data = self.parseRssPage(np_title,rss_url,title_info[Const.RSS][Const.RSS_TAGS],title_info[Const.RSS][Const.PUBDATE_FORMAT])
-			for link in rss_parsed_data:
-				html_page = bs(self.downloadPage(link), Const.HTML_PARSER)
-				paged_data = self.parsePageData(html_page,title_info[Const.PAGE])
-				rss_parsed_data[link].update(paged_data)
-				IEditorial.objStorage.storeData(np_title,rss_parsed_data[link])
-
+			try:
+				rss_url = title_info[Const.RSS_URL]
+				rss_parsed_data = self.parseRssPage(np_title,rss_url,title_info[Const.RSS][Const.RSS_TAGS],title_info[Const.RSS][Const.PUBDATE_FORMAT])
+				for link in rss_parsed_data:
+					html_page = bs(self.downloadPage(link), Const.HTML_PARSER)
+					paged_data = self.parsePageData(html_page,title_info[Const.PAGE])
+					rss_parsed_data[link].update(paged_data)
+					IEditorial.objStorage.storeData(np_title,rss_parsed_data[link])
+			except requests.exceptions.RequestException as e:
+				logger.error(f"Exception occurred for {np_title}. Skipping ...")
+		
 		IEditorial.objStorage.storeMaxFeedDate(self.max_feed_dict)
 		self.dumpStats(self.stats)
+
 
 	def parsePageData(self, html_page,config_page):
 		data_dict = {}
@@ -72,12 +77,13 @@ class IEditorial:
 		try:
 			logger.debug(f"Downloading url for parsing : {url}")
 			resp = requests.get(url=url, verify=False)
-		except requests.exceptions.Timeout as eto:
-			logger.warning(f"Request timed out for url : {url}.")
-			logger.exception(f"Exception happened : {eto}")
+			# check if url returned success
+			resp.raise_for_status()
 		except requests.exceptions.RequestException as e:
 			logger.exception(f"Exception happened : {e}")
-		resp.encoding = 'utf-8'
+			raise
+		else:
+			resp.encoding = 'utf-8'
 		logger.debug("Page downloading completed.")
 		return resp.text
 
