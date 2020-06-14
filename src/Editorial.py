@@ -6,6 +6,7 @@ from datetime import date, datetime,timedelta
 from PersistData import IPersistData
 import logging
 import Const
+import Util
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
@@ -17,9 +18,12 @@ class IEditorial:
 	stats = {}
 	objStorage = None
 	def __init__(self,config):
+		self.selective_parse = False
 		if IEditorial.objStorage is None:
 			IEditorial.objStorage = IPersistData().getInstance(config[Const.STORAGE_TYPE], config)
 			IEditorial.max_feed_dict = IEditorial.objStorage.getMaxFeedDate()
+			if IEditorial.max_feed_dict:
+				self.selective_parse = True
 
 	def fetchArticle(self,config_data):
 		
@@ -32,10 +36,11 @@ class IEditorial:
 					paged_data = self.parsePageData(html_page,title_info[Const.PAGE])
 					rss_parsed_data[link].update(paged_data)
 					IEditorial.objStorage.storeData(np_title,rss_parsed_data[link])
+
 			except requests.exceptions.RequestException as e:
 				logger.error(f"Exception occurred for {np_title}. Skipping ...")
-		
 		IEditorial.objStorage.storeMaxFeedDate(self.max_feed_dict)
+		IEditorial.objStorage.flushData()
 		self.dumpStats(self.stats)
 
 
@@ -118,13 +123,14 @@ class IEditorial:
 			item_dict[Const.FEED_DATE] = self.cleanCDATA(item.pubDate.get_text().strip(char_to_strip))
 			item_dict[Const.FEED_DATE] = self.processDate(item_dict[Const.FEED_DATE],pub_date_format)
 			
-			if self.isArticleProcessed(np_title,item_dict[Const.FEED_DATE]):
+			if self.isArticleProcessed(np_title,item_dict[Const.FEED_DATE]) and self.selective_parse:
 				logger.debug(f"URL {item_dict[Const.TITLE]} already processed. Skipping...")
 				url_skipped = url_skipped + 1
 				continue
 			
 			
 			item_dict[Const.URL] = self.cleanCDATA(item.link.get_text().strip(char_to_strip))
+			item_dict[Const.LAST_UPDATED_ON] = Util.convertDateToStr(date.today())
 
 			for tag in list_tags_to_process:
 				item_dict[tag] = self.cleanCDATA(item.find(tag).get_text().strip(char_to_strip))
@@ -142,7 +148,7 @@ class IEditorial:
 		else:
 			date_str_processed = " ".join([date_arr[0],date_arr[1], date_arr[2]])
 		date_str_processed = date_str_processed.replace(',','')
-		date_str_processed = datetime.strptime(date_str_processed,date_format).date().strftime(str_out_date_format)
+		date_str_processed = Util.convertStrToDateToStr(date_str_processed, date_format,str_out_date_format)
 		return date_str_processed
 	
 	def processData(self, content, subtag_to_include_list, subtag_to_exclude_list=[]):
@@ -172,7 +178,8 @@ class IEditorial:
 		return content
 
 	def isArticleProcessed(self,np_title,feed_date_str):
-		feed_date = datetime.strptime(feed_date_str,Const.DD_MM_YYYY).date()
+		# feed_date = datetime.strptime(feed_date_str,Const.DD_MM_YYYY).date()
+		feed_date = Util.convertStrToDate(feed_date_str)
 		
 		# if dictionary already has entry for the np_type
 		if np_title in 	self.max_feed_dict:

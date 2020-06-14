@@ -8,13 +8,25 @@ DATE 			= 'date'
 FEED_DATE		= 'pubDate'
 DATA 			= 'story'
 URL 			= 'link'
+LAST_UPDATED_ON	= 'last_updated'
 
 # location to store articles
 FILE			= 'file'
 DB				= 'db'
 
+# db type consts
+HOST			= 'host'
+PORT 			= 'port'
+DBNAME			= 'database'
+USER			= 'username'
+PASSWORD		= 'password'
+COLLECTION		= 'collection'
+URI_PREFIX		= 'mongodb://'
+AUTHDB			=  'authdb'
+
 # Date formats of rss
 DD_MM_YYYY		= '%d-%m-%Y'
+TIMESTAMPT		= '%Y-%m-%dT%H:%M:%S.%f'
 
 # parser types
 HTML_PARSER		= 'html.parser'
@@ -99,7 +111,9 @@ TYPESETTING_ENTITES  = {
 	"&#8805;" 	:	">=",
 	"&#062;"	:	"<",
 	"&#060;"	:	">",
-
+	"&#34;"     :   "\"",
+	"&#233;"	:  "é",
+	
 	"&cent;"  	:  "¢",	
 	"&pound;"	:  "£", 	
 	"&sect;"	:  "§",	
@@ -135,5 +149,7 @@ TYPESETTING_ENTITES  = {
 	"&lt;" 		:  "<",	
 	"&gt;"		:  ">",
 	"&nbsp;"	:  " ",
-	"&amp;"		:  "&"
+	"&amp;"		:  "&",
+	"&quot;"	:  "\"",
+	"&eacute;"	:  "é"
 }

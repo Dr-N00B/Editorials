@@ -1,8 +1,14 @@
 {
-	"url_file"  : "path to action_items.json",
+	"url_file"  : "/home/ubuntu/Editorials/config/action_items.json",
 	"log_level": "DEBUG",
 	"storage" : {
-			"type" : "file",
-			"path" : "directory path"
+		"type" 		: "",
+		"host" 		: "",
+		"port" 		: "",
+		"username" 	: "",
+		"password" 	: "",
+		"database"	: "",
+		"collection": "",
+		"authdb"	: ""
 	}
 }

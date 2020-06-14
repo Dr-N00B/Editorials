@@ -2,6 +2,7 @@ import os.path
 import sys
 import json
 import Const
+from datetime import date, datetime,timedelta
 
 def getAbsPath(path, *varArgs):
 	abs_path = path
@@ -22,3 +23,19 @@ def loadJsonFromFile(file):
 	with open(file,'r') as infile:
 		conf_loaded = json.load(infile)	
 	return conf_loaded
+
+def convertDateToStr(date_str, format=Const.DD_MM_YYYY):
+	return date_str.strftime(format)
+	
+def convertStrToDate(date_str, format=Const.DD_MM_YYYY):
+	return datetime.strptime(date_str,format).date()
+
+def convertStrToDateToStr(date_str, format, out_format = Const.DD_MM_YYYY):
+	tmp_date = convertStrToDate(date_str,format)
+	return convertDateToStr(tmp_date,out_format)
+
+def convertDatetimeToDate(date, format = Const.DD_MM_YYYY):
+	return datetime.strptime(date.date().strftime(format),format).date()
+
+def convertDateToDateTime(date):
+	return datetime(date.year, date.month, date.day)
