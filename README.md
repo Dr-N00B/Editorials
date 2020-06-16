@@ -10,15 +10,15 @@ Config parameters are:
 ```JSON
 "url_file"  : "path to the file where all tags related information is present",	"log_level":  "log level in python. Different log levels are DEBUG, INFO, WARNING, ERROR, CRITICAL",
 "storage" : {
-	"type" 		: "file" or "db", only one at a time
-	"path" 		: "path only, applicable for file only",
-	"host" 		: <hostname>,
-	"port" 		: <port>,
-	"username" 	: <username>, if username and password not given, it will try to connect without credential.
-	"password" 	: <password>, plaintext as of now,
-	"database"	: <db name>,
-	"collection" 	: <collection name>
-	"authdb"	: authentication db, optional, default 'admin' will be used.
+	"type" 		: "file or db, only one at a time",
+	"path" 		: "path only applicable for file only",
+	"host" 		: "hostname/ip address",
+	"port" 		: "port number",
+	"username" 	: "username, if username and password not given, it will try to connect without credential",
+	"password" 	: "password, plaintext as of now",
+	"database"	: "db name",
+	"collection" 	: "collection name",
+	"authdb"	: "authentication db, optional, default 'admin' will be used"
 }
 ```
 
