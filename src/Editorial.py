@@ -10,7 +10,7 @@ import Util
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-logger = logging.getLogger(Const.APP_NAME)
+logger = logging.getLogger()
 	
 
 class IEditorial:
@@ -37,7 +37,8 @@ class IEditorial:
 					rss_parsed_data[link].update(paged_data)
 					IEditorial.objStorage.storeData(np_title,rss_parsed_data[link])
 
-			except requests.exceptions.RequestException as e:
+			except Exception as e:
+				logger.error(f"Exception : {e}")
 				logger.error(f"Exception occurred for {np_title}. Skipping ...")
 		IEditorial.objStorage.storeMaxFeedDate(self.max_feed_dict)
 		IEditorial.objStorage.flushData()
@@ -81,6 +82,8 @@ class IEditorial:
 	def downloadPage(self,url):
 		try:
 			logger.debug(f"Downloading url for parsing : {url}")
+			# header = {'user-agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+			# resp = requests.get(url=url, verify=False,headers=header)
 			resp = requests.get(url=url, verify=False)
 			# check if url returned success
 			resp.raise_for_status()
@@ -170,7 +173,7 @@ class IEditorial:
 		content =  re.sub(tag_pattern, '', content)
 
 		# replace special typesetting characters
-		speacial_char_pattern = r"&.*?;"
+		speacial_char_pattern = r"^&.*?;"
 		special_char_list = re.findall(speacial_char_pattern,content)
 
 		for special_char in special_char_list:

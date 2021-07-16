@@ -9,7 +9,7 @@ from urllib.parse import quote_plus
 from pymongo import MongoClient,ASCENDING, DESCENDING
 from pymongo.errors import ConnectionFailure,BulkWriteError
 
-logger = logging.getLogger(Const.APP_NAME)
+logger = logging.getLogger()
 
 class IPersistData:
 	def __init__(self):
